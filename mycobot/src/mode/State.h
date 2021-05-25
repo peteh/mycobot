@@ -6,7 +6,8 @@ namespace cobot
 {
     class RobotState
     {
-        estop::EStopReceiver::EStopState eStopState;
+        public:
+        estop::EStopState eStopState;
     };
 }
 

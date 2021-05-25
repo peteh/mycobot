@@ -1,5 +1,8 @@
 #include "AbstractMode.h"
+#include "ModeLogger.h"
+
 #include <M5Stack.h>
+
 namespace cobot
 {
     AbstractMode::AbstractMode()
@@ -12,7 +15,7 @@ namespace cobot
     }
     void AbstractMode::visualize()
     {
-        if(!m_visualizeUpdate)
+        if(!m_visualizeUpdate && !ModeLogger::needsRefresh())
         {
             return;
         }
@@ -36,23 +39,42 @@ namespace cobot
             M5.Lcd.setCursor(230, 210);
             M5.Lcd.print(m_buttonCText);
         }
+
+        M5.Lcd.setCursor(0, 0);
+
+        // TODO: do this more dynamically
+        M5.Lcd.print(ModeLogger::getLines().c_str());    
+        
         m_visualizeUpdate = false;
+        ModeLogger::resetNeedsRefresh();
     }
 
     void AbstractMode::setButtonAText(String text)
     {
+        if(m_buttonAText.compareTo(text) == 0)
+        {
+            return;
+        }
         m_buttonAText = text;
         m_visualizeUpdate = true;
     }
 
     void AbstractMode::setButtonBText(String text)
     {
+        if(m_buttonBText.compareTo(text) == 0)
+        {
+            return;
+        }
         m_buttonBText = text;
         m_visualizeUpdate = true;
     }
 
     void AbstractMode::setButtonCText(String text)
     {
+        if(m_buttonCText.compareTo(text) == 0)
+        {
+            return;
+        }
         m_buttonCText = text;
         m_visualizeUpdate = true;
     }
