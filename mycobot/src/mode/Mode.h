@@ -1,5 +1,4 @@
-#ifndef MODE_H
-#define MODE_H
+#pragma once
 
 #include "State.h"
 
@@ -17,10 +16,8 @@ namespace cobot
         // called after switching to the mode
         virtual void init() = 0;
         virtual void visualize() = 0;
-        virtual void process(RobotState& state) = 0;
+        virtual void process(RobotState& oldState, RobotState& newState) = 0;
         virtual ~IMode(){};
     };
 
 }
-
-#endif

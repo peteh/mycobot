@@ -22,7 +22,7 @@ namespace cobot
         M5.Lcd.clear(BLACK);
         M5.Lcd.setTextSize(5);
         M5.Lcd.setCursor(100, 100);
-        M5.Lcd.print("test");
+        M5.Lcd.print(m_bigText);
         M5.Lcd.setTextSize(2);
         if(!m_buttonAText.isEmpty())
         {
@@ -47,6 +47,16 @@ namespace cobot
         
         m_visualizeUpdate = false;
         ModeLogger::resetNeedsRefresh();
+    }
+
+    void AbstractMode::setBigText(String text)
+    {
+        if(m_bigText.compareTo(text) == 0)
+        {
+            return;
+        }
+        m_bigText = text;
+        m_visualizeUpdate = true;
     }
 
     void AbstractMode::setButtonAText(String text)

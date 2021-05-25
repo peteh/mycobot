@@ -13,10 +13,11 @@ namespace cobot
         m_mycobotBasic.stop();
         m_cobotFreeMove = false;
     }
-    void EStopMode::process(RobotState &state)
+    void EStopMode::process(RobotState &oldState, RobotState &newState)
     {
-        if (state.eStopState == estop::ESTOP_FREE)
+        if (newState.eStopState == estop::ESTOP_FREE)
         {
+            setBigText("Waiting");
             if (m_cobotFreeMove)
             {
                 setButtonAText("Hold");
@@ -41,6 +42,7 @@ namespace cobot
         }
         else
         {
+            setBigText("E-STOP");
             setButtonAText("");
         }
     }

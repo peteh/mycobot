@@ -1,22 +1,29 @@
-#pragma once
+#ifndef DEBUG_MODE_H
+#define DEBUG_MODE_H
 
 #include <MycobotBasic.h>
 #include "AbstractMode.h"
+typedef  unsigned char u8;
 
 namespace cobot
 {
-    class EStopMode : public AbstractMode
+    
+
+    class DebugMode : public AbstractMode
     {
         public: 
-            EStopMode(MycobotBasic& myCobot);
+            DebugMode(MycobotBasic& myCobot);
             virtual void init() override;
 
             virtual void process(RobotState& oldState, RobotState& newState) override;
 
-            virtual ~EStopMode() {};
+            virtual ~DebugMode() {};
         
         private:
+            int readData();
+            
             MycobotBasic m_mycobotBasic;
-            bool m_cobotFreeMove;
     };
 }
+
+#endif

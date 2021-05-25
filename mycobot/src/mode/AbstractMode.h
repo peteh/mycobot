@@ -16,6 +16,7 @@ namespace cobot
         virtual void visualize();
 
 
+        void setBigText(String text);
         void setButtonAText(String text);
         void setButtonBText(String text);
         void setButtonCText(String text);
@@ -24,6 +25,7 @@ namespace cobot
 
     private:
         bool m_visualizeUpdate;
+        String m_bigText;
         String m_buttonAText;
         String m_buttonBText;
         String m_buttonCText;
