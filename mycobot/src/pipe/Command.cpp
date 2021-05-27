@@ -44,6 +44,7 @@ namespace cobot
     {
         if (data != 0xfe)
         {
+            //Log::errorf("H1: %c", data);
             // not matching, we continue to find header1
             m_state = FIND_HEADER1;
             return;
@@ -55,6 +56,7 @@ namespace cobot
     {
         if (data != 0xfe)
         {
+            //Log::error("Did not find header2");
             // second header byte not matched, we go back to step 1
             m_state = FIND_HEADER1;
             return;
@@ -68,6 +70,7 @@ namespace cobot
         m_commandSize = data;
         m_bufferIndex = 0;
         // start to read data
+        //Log::infof("Getting command with size: %d", m_commandSize);
         m_state = READ_DATA;
     }
 
@@ -75,7 +78,7 @@ namespace cobot
     {
         // read one byte into the buffer
         m_buffer[m_bufferIndex++] = data;
-        if (m_bufferIndex >= m_commandSize)
+        if (m_bufferIndex >= m_commandSize - 1)
         {
             m_state = FIND_FOOTER;
         }
@@ -85,11 +88,25 @@ namespace cobot
     {
         if (data != FOOTER)
         {
+            Log::error("Did not find footer");
             // not matching, we reset everything and start from scratch
             m_state = FIND_HEADER1;
             return;
         }
+        //Log::info("Received a full command");
         m_state = FINISHED;
+    }
+
+    void Command::forwardCommand(HardwareSerial serial)
+    {
+        serial.write(HEADER);
+        serial.write(HEADER);
+        serial.write(m_commandSize);
+        for(unsigned int i = 0; i < m_commandSize - 1; i++)
+        {
+            serial.write(m_buffer[i]);
+        }
+        serial.write(FOOTER);
     }
 
     bool Command::isFinished()

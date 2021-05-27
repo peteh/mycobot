@@ -3,6 +3,8 @@
 
 #include <MycobotBasic.h>
 #include "AbstractMode.h"
+#include "../pipe/Command.h"
+
 typedef  unsigned char u8;
 
 namespace cobot
@@ -23,6 +25,8 @@ namespace cobot
             int readData();
             
             MycobotBasic m_mycobotBasic;
+            Command m_incomingCommand;
+            Command m_outgoingCommand;
     };
 }
 

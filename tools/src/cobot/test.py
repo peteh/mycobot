@@ -7,14 +7,18 @@ baud = 115200
 mycobot = MyCobot("/dev/ttyUSB0", baud, debug=True)
 reset = [153.19, 137.81, -153.54, 156.79, 87.27, 13.62]
 print("\nStart check basic options\n")
+print("::get_radians() ==> radians: {}\n".format(mycobot.get_radians()))
+time.sleep(1)
+
 
 mycobot.set_color(255, 255, 0)
 print("::set_color() ==> color {}\n".format("255 255 0"))
 time.sleep(1)
 
-mycobot.set_color(255, 255, 0)
+mycobot.set_color(255, 255, 255)
 print("::set_color() ==> color {}\n".format("255 255 255"))
 time.sleep(3)
+
 
 angles = [0, 0, 0, 0, 0, 0]
 mycobot.send_angles(angles, 100)
@@ -24,9 +28,11 @@ time.sleep(3)
 print("::get_angles() ==> degrees: {}\n".format(mycobot.get_angles()))
 time.sleep(1)
 
+
 mycobot.send_angle(Angle.J1.value, 90, 50)
 print("::send_angle() ==> angle: joint1, degree: 90, speed: 50\n")
 time.sleep(4)
+
 
 radians = [1, 1, 1, 1, 1, 1]
 mycobot.send_radians(radians, 100)

@@ -112,5 +112,5 @@ void loop()
   //visualizeState(g_previousRobotState, robotState, false);
   g_mode->visualize();
   g_previousRobotState = robotState;
-  delay(10);
+  //delay(10);
 }

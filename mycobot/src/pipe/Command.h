@@ -22,6 +22,19 @@ namespace cobot
     Command();
         void readByte(uint8_t data);
         bool isFinished();
+        void forwardCommand(HardwareSerial serial);
+
+        Command& operator=(Command other)
+    {
+        //std::cout << "copy assignment of A\n";
+        std::swap(m_commandSize, other.m_commandSize);
+        std::swap(m_state, other.m_state);
+        std::swap(m_bufferIndex, other.m_bufferIndex);
+
+        // TODO: does this work properly?
+        std::swap(m_buffer, other.m_buffer);
+        return *this;
+    }
 
     private:
         void findHeader1(uint8_t data);

@@ -10,7 +10,13 @@ namespace cobot
     }
     void EStopMode::init()
     {
+        m_mycobotBasic.pause();
         m_mycobotBasic.stop();
+        m_mycobotBasic.stop();
+        m_mycobotBasic.stop();
+        m_mycobotBasic.stop();
+        m_mycobotBasic.stop();
+        m_mycobotBasic.setLEDRGB(255, 0, 0);
         m_cobotFreeMove = false;
     }
     void EStopMode::process(RobotState &oldState, RobotState &newState)
