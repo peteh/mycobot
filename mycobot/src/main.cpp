@@ -9,10 +9,15 @@
 #include "mode/Mode.h"
 #include "mode/EStopMode.h"
 #include "mode/AutomaticMode.h"
-#include "mode/DebugMode.h"
+#include "mode/WaitAutomaticMode.h"
+#include "mode/AutomaticDirectMode.h"
 #include "mode/MainMode.h"
+#include "mode/DebugMode.h"
+#include "mode/RecordMode.h"
+#include "mode/PlayRecordMode.h"
 #include "mode/BootMode.h"
 #include "mode/ModeLogger.h"
+#include "record/Recorder.h"
 
 uint8_t WIFI_CHANNEL = 0;
 
@@ -35,16 +40,15 @@ uint8_t BUTTON_STATION_MAC[] = {0xDE, 0xAD, 0x13, 0x37, 0x00, 0x02};
 
 MycobotBasic myCobot;
 estop::EStopReceiver *g_eStopReceiver;
+
 estop::EStopState g_previousEStopState;
-
-cobot::IMode *g_mode;
-cobot::IMode *g_modeEStop;
-cobot::IMode *g_modeAutomatic;
-cobot::IMode *g_modeDebug;
-cobot::IMode *g_modeMain;
-cobot::IMode *g_modeBoot;
-
 cobot::RobotState g_previousRobotState;
+
+cobot::IMode* g_mode;
+
+cobot::record::Recorder* g_recorder;
+
+std::map<cobot::Mode, cobot::IMode*> g_modeMap = std::map<cobot::Mode, cobot::IMode*>();
 
 void setup()
 {
@@ -65,13 +69,19 @@ void setup()
   g_eStopReceiver->init();
   g_previousEStopState = g_eStopReceiver->getEStopState();
 
-  g_modeBoot = new cobot::BootMode(myCobot);
-  g_modeAutomatic = new cobot::AutomaticMode(myCobot);
-  g_modeMain = new cobot::MainMode(myCobot);
-  g_modeDebug = new cobot::DebugMode(myCobot);
-  g_modeEStop = new cobot::EStopMode(myCobot);
+  g_recorder = new cobot::record::Recorder();
+  g_modeMap[cobot::MODE_BOOT] = new cobot::BootMode(myCobot);
+  g_modeMap[cobot::MODE_MAIN] = new cobot::MainMode(myCobot);
+  g_modeMap[cobot::MODE_RECORD] = new cobot::RecordMode(myCobot, g_recorder);
+  g_modeMap[cobot::MODE_PLAY_RECORD] = new cobot::PlayRecordMode(myCobot, g_recorder);
+  g_modeMap[cobot::MODE_AUTOMATIC] = new cobot::AutomaticMode(myCobot);
+  g_modeMap[cobot::MODE_AUTOMATIC_WAIT] = new cobot::WaitAutomaticMode(myCobot);
+  g_modeMap[cobot::MODE_AUTOMATIC_DIRECT] = new cobot::AutomaticDirectMode(myCobot);
+  g_modeMap[cobot::MODE_ESTOP] = new cobot::EStopMode(myCobot);
 
-  g_mode = g_modeBoot;
+  g_modeMap[cobot::MODE_DEBUG] = new cobot::DebugMode(myCobot);
+
+  g_mode = g_modeMap[cobot::MODE_BOOT];
   g_mode->init();
 
   delay(200);
@@ -92,8 +102,9 @@ void loop()
   // if estop state changes to stopped, then immidiately go to estop for any more we are in
   if (robotState.eStopState != g_previousRobotState.eStopState && robotState.eStopState != estop::ESTOP_FREE)
   {
-    g_mode = g_modeEStop;
+    g_mode = g_modeMap[cobot::MODE_ESTOP];
     g_mode->init();
+    g_mode->forceNextVisualizationUpdate();
   }
   
   g_mode->visualize();
@@ -101,20 +112,9 @@ void loop()
 
   if(newMode != cobot::MODE_THIS)
   {
-    switch(newMode)
-    {
-      case cobot::MODE_MAIN:
-        g_mode = g_modeMain;
-        break;
-      case cobot::MODE_AUTOMATIC:
-        g_mode = g_modeAutomatic;
-        break;
-    }
+    g_mode = g_modeMap[newMode];
     g_mode->init();
     g_mode->forceNextVisualizationUpdate();
-  }
-  //delay(5);
-  //visualizeState(g_previousRobotState, robotState, false);
-  
+  }  
   g_previousRobotState = robotState;
 }

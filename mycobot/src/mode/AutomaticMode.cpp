@@ -2,13 +2,11 @@
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <Log.h>
-#include <MycobotBasic.h>
-#include <ParameterList.h>
 
 namespace cobot
 {   
     AutomaticMode::AutomaticMode(MycobotBasic &myCobot)
-        : AbstractMode(),
+        : AbstractMode(myCobot),
           m_mycobotBasic(myCobot)
     {
     }
@@ -19,6 +17,7 @@ namespace cobot
         setButtonAText("");
         setButtonBText("Main");
         setButtonCText("");
+        m_mycobotBasic.setLEDRGB(0, 0, 255);
     }
 
     Mode AutomaticMode::process(RobotState &oldState, RobotState &newState)
@@ -30,6 +29,7 @@ namespace cobot
         {
             return MODE_MAIN;
         }
+
         // read all data from the external controller and forward them
         // to the atom if the command is finished.
         if (Serial.available() > 0)

@@ -7,20 +7,17 @@ namespace cobot
 {
     
 
-    class BootMode : public AbstractMode
+    class WaitAutomaticMode : public AbstractMode
     {
         public: 
-            BootMode(MycobotBasic& myCobot);
+            WaitAutomaticMode(MycobotBasic& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
 
-            virtual ~BootMode() {};
+            virtual ~WaitAutomaticMode() {};
         
-        private:          
-            void pulse(uint delay, uint stepSize);
-            void pulseUp(uint delay, uint stepSize);
-            void pulseDown(uint delay, uint stepSize);
+        private:
             MycobotBasic m_mycobotBasic;
             unsigned long m_initTime;
     };

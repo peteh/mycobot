@@ -8,7 +8,7 @@
 namespace cobot
 {   
     MainMode::MainMode(MycobotBasic &myCobot)
-        : AbstractMode(),
+        : AbstractMode(myCobot),
           m_mycobotBasic(myCobot)
     {
     }
@@ -16,14 +16,26 @@ namespace cobot
     void MainMode::init()
     {
         setBigText("Main");
-        setButtonCText("Auto");
+        setButtonAText("Record");
+        setButtonBText("Play Record");
+        setButtonCText("Debug");
+        m_mycobotBasic.setLEDRGB(255, 255, 255);
     }
 
     Mode MainMode::process(RobotState &oldState, RobotState &newState)
     {
+        if(M5.BtnA.wasPressed())
+        {
+            return MODE_RECORD;
+        }
+
+        if(M5.BtnB.wasPressed())
+        {
+            return MODE_PLAY_RECORD;
+        }
         if(M5.BtnC.wasPressed())
         {
-            return MODE_AUTOMATIC;
+            return MODE_DEBUG;
         }
         return MODE_THIS;
         

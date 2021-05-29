@@ -7,9 +7,17 @@ namespace cobot
     enum Mode
     {
         MODE_THIS, 
+        MODE_BOOT,
         MODE_ESTOP,
+        MODE_RECORD,
+        MODE_PLAY_RECORD, 
         MODE_AUTOMATIC,
-        MODE_MAIN
+        MODE_AUTOMATIC_DIRECT,
+        MODE_MAIN,
+        MODE_AUTOMATIC_WAIT,
+
+        MODE_DEBUG
+
     };
 
     class IMode

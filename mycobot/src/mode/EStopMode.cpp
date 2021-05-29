@@ -4,7 +4,7 @@
 namespace cobot
 {
     EStopMode::EStopMode(MycobotBasic &myCobot)
-        : AbstractMode(),
+        : AbstractMode(myCobot),
           m_mycobotBasic(myCobot),
           m_cobotFreeMove(false)
     {
@@ -32,14 +32,13 @@ namespace cobot
             setButtonCText("Auto");
             if (m_cobotFreeMove)
             {
-                m_mycobotBasic.setLEDRGB(0, 0, 255);
+                setLEDColor(color::COLOR_BLUE);
                 setButtonBText("");
                 setButtonAText("Hold");
             }
             else
             {
-                
-                m_mycobotBasic.setLEDRGB(255, 255, 255);
+                setLEDColor(color::COLOR_WHITE);
                 setButtonBText("Main");
                 setButtonAText("Move Free");
             }
@@ -47,7 +46,7 @@ namespace cobot
 
         else if (newState.eStopState == estop::ESTOP_TIMEOUT)
         {
-            m_mycobotBasic.setLEDRGB(255, 0, 0);
+            setLEDColor(color::COLOR_RED);
             setBigText("E-STOP TIMEOUT");
             setButtonAText("");
             setButtonBText("");
@@ -55,7 +54,7 @@ namespace cobot
         }
         else
         {
-            m_mycobotBasic.setLEDRGB(255, 0, 0);
+            setLEDColor(color::COLOR_RED);
             setBigText("E-STOP");
             setButtonAText("");
             setButtonBText("");
@@ -92,7 +91,7 @@ namespace cobot
             // Automatic Button pressed
             if (M5.BtnC.wasPressed())
             {
-                return MODE_AUTOMATIC;
+                return MODE_AUTOMATIC_WAIT;
             }
         }
 

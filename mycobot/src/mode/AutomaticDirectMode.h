@@ -1,24 +1,30 @@
-#pragma once
+#ifndef DEBUG_MODE_H
+#define DEBUG_MODE_H
 
 #include <MycobotBasic.h>
 #include "AbstractMode.h"
+#include "../pipe/Command.h"
+#include "../pipe/Response.h"
+
+typedef  unsigned char u8;
 
 namespace cobot
 {
     
 
-    class DebugMode : public AbstractMode
+    class AutomaticDirectMode : public AbstractMode
     {
         public: 
-            DebugMode(MycobotBasic& myCobot);
+            AutomaticDirectMode(MycobotBasic& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
 
-            virtual ~DebugMode() {};
+            virtual ~AutomaticDirectMode() {};
         
         private:          
             MycobotBasic m_mycobotBasic;
-            unsigned long m_initTime;
     };
 }
+
+#endif
