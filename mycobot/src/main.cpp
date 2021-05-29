@@ -10,6 +10,8 @@
 #include "mode/EStopMode.h"
 #include "mode/AutomaticMode.h"
 #include "mode/DebugMode.h"
+#include "mode/MainMode.h"
+#include "mode/BootMode.h"
 #include "mode/ModeLogger.h"
 
 uint8_t WIFI_CHANNEL = 0;
@@ -28,9 +30,6 @@ unsigned long MSG_TIME_MS = 20;
 // message timeout
 unsigned long SKIP_BEFORE_TIMEOUT = 5;
 
-// Address of the central station
-uint8_t BASE_STATION_MAC[] = {0xDE, 0xAD, 0x13, 0x37, 0x00, 0x01};
-
 // Address of the client station (wireless estop button)
 uint8_t BUTTON_STATION_MAC[] = {0xDE, 0xAD, 0x13, 0x37, 0x00, 0x02};
 
@@ -42,28 +41,10 @@ cobot::IMode *g_mode;
 cobot::IMode *g_modeEStop;
 cobot::IMode *g_modeAutomatic;
 cobot::IMode *g_modeDebug;
+cobot::IMode *g_modeMain;
+cobot::IMode *g_modeBoot;
 
 cobot::RobotState g_previousRobotState;
-
-void visualizeEStopState(estop::EStopState state)
-{
-  if (state == estop::ESTOP_FREE)
-  {
-    myCobot.setLEDRGB(0, 0xFF, 0x00); // set RGB show green
-  }
-  else
-  {
-    myCobot.setLEDRGB(0xFF, 0, 0); // set RGB show red
-  }
-}
-
-void visualizeState(cobot::RobotState &oldState, cobot::RobotState &newState, bool forceUpdate = false)
-{
-  if (oldState.eStopState != newState.eStopState || forceUpdate)
-  {
-    visualizeEStopState(newState.eStopState);
-  }
-}
 
 void setup()
 {
@@ -84,14 +65,21 @@ void setup()
   g_eStopReceiver->init();
   g_previousEStopState = g_eStopReceiver->getEStopState();
 
+  g_modeBoot = new cobot::BootMode(myCobot);
   g_modeAutomatic = new cobot::AutomaticMode(myCobot);
+  g_modeMain = new cobot::MainMode(myCobot);
   g_modeDebug = new cobot::DebugMode(myCobot);
   g_modeEStop = new cobot::EStopMode(myCobot);
 
-  g_mode = g_modeDebug;
+  g_mode = g_modeBoot;
   g_mode->init();
 
   delay(200);
+}
+
+void updateRobotState(cobot::RobotState &robotState)
+{
+  robotState.eStopState = g_eStopReceiver->getEStopState();
 }
 
 void loop()
@@ -99,7 +87,7 @@ void loop()
   M5.update();
   cobot::RobotState robotState = g_previousRobotState;
 
-  robotState.eStopState = g_eStopReceiver->getEStopState();
+  updateRobotState(robotState);
 
   // if estop state changes to stopped, then immidiately go to estop for any more we are in
   if (robotState.eStopState != g_previousRobotState.eStopState && robotState.eStopState != estop::ESTOP_FREE)
@@ -107,10 +95,26 @@ void loop()
     g_mode = g_modeEStop;
     g_mode->init();
   }
-  g_mode->process(g_previousRobotState, robotState);
+  
+  g_mode->visualize();
+  cobot::Mode newMode = g_mode->process(g_previousRobotState, robotState);
+
+  if(newMode != cobot::MODE_THIS)
+  {
+    switch(newMode)
+    {
+      case cobot::MODE_MAIN:
+        g_mode = g_modeMain;
+        break;
+      case cobot::MODE_AUTOMATIC:
+        g_mode = g_modeAutomatic;
+        break;
+    }
+    g_mode->init();
+    g_mode->forceNextVisualizationUpdate();
+  }
   //delay(5);
   //visualizeState(g_previousRobotState, robotState, false);
-  g_mode->visualize();
+  
   g_previousRobotState = robotState;
-  //delay(10);
 }

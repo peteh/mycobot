@@ -4,6 +4,7 @@
 #include <MycobotBasic.h>
 #include "AbstractMode.h"
 #include "../pipe/Command.h"
+#include "../pipe/Response.h"
 
 typedef  unsigned char u8;
 
@@ -17,16 +18,14 @@ namespace cobot
             DebugMode(MycobotBasic& myCobot);
             virtual void init() override;
 
-            virtual void process(RobotState& oldState, RobotState& newState) override;
+            virtual Mode process(RobotState& oldState, RobotState& newState) override;
 
             virtual ~DebugMode() {};
         
-        private:
-            int readData();
-            
+        private:          
             MycobotBasic m_mycobotBasic;
             Command m_incomingCommand;
-            Command m_outgoingCommand;
+            Response m_outgoingCommand;
     };
 }
 

@@ -5,20 +5,19 @@
 
 namespace cobot
 {
-    class EStopMode : public AbstractMode
+    
+
+    class MainMode : public AbstractMode
     {
         public: 
-            EStopMode(MycobotBasic& myCobot);
-
+            MainMode(MycobotBasic& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
-            void updateVisualization(RobotState &robotState);
 
-            virtual ~EStopMode() {};
+            virtual ~MainMode() {};
         
-        private:
+        private:          
             MycobotBasic m_mycobotBasic;
-            bool m_cobotFreeMove;
     };
 }

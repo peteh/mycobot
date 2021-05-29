@@ -3,6 +3,9 @@
 
 #include <MycobotBasic.h>
 #include "AbstractMode.h"
+#include "../pipe/Command.h"
+#include "../pipe/Response.h"
+
 typedef  unsigned char u8;
 
 namespace cobot
@@ -15,18 +18,14 @@ namespace cobot
             AutomaticMode(MycobotBasic& myCobot);
             virtual void init() override;
 
-            virtual void process(RobotState& oldState, RobotState& newState) override;
+            virtual Mode process(RobotState& oldState, RobotState& newState) override;
 
             virtual ~AutomaticMode() {};
         
         private:
-            int readData();
-            
-            bool checkHeader();
-            void rFlushSerial();
-            int readSerial(unsigned char* nDat, int nLen);
             MycobotBasic m_mycobotBasic;
-            bool m_cobotFreeMove;
+            Command m_incomingCommand;
+            Response m_outgoingCommand;
     };
 }
 

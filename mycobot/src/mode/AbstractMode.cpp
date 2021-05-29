@@ -13,38 +13,82 @@ namespace cobot
           
     {
     }
+
+
+    void AbstractMode::forceNextVisualizationUpdate()
+    {
+        m_visualizeUpdate = true;
+    }
+
     void AbstractMode::visualize()
     {
         if(!m_visualizeUpdate && !ModeLogger::needsRefresh())
         {
             return;
         }
-        M5.Lcd.clear(BLACK);
-        M5.Lcd.setTextSize(5);
-        M5.Lcd.setCursor(100, 100);
-        M5.Lcd.print(m_bigText);
-        M5.Lcd.setTextSize(2);
+        /*
+        TFT_eSprite spr = TFT_eSprite(&M5.Lcd);
+        spr.createSprite(100, 100);
+
+        spr.fillSprite(TFT_BLACK);
+        spr.setTextSize(5);
+        spr.setCursor(100, 100);
+        spr.print(m_bigText);
+        spr.setTextSize(2);
         if(!m_buttonAText.isEmpty())
         {
-            M5.Lcd.setCursor(30, 210);
-            M5.Lcd.print(m_buttonAText);
+            spr.setCursor(30, 210);
+            spr.print(m_buttonAText);
         }
         if(!m_buttonBText.isEmpty())
         {
-            M5.Lcd.setCursor(120, 210);
-            M5.Lcd.print(m_buttonBText);
+            spr.setCursor(120, 210);
+            spr.print(m_buttonBText);
         }
         if(!m_buttonCText.isEmpty())
         {
-            M5.Lcd.setCursor(230, 210);
-            M5.Lcd.print(m_buttonCText);
+            spr.setCursor(230, 210);
+            spr.print(m_buttonCText);
+        }
+
+        spr.setCursor(0, 0);
+
+        // TODO: do this more dynamically
+        spr.print(ModeLogger::getLines().c_str());
+        spr.pushSprite(0,0);
+        */
+        M5.Lcd.clear(BLACK);
+
+        int16_t screenWidth = M5.Lcd.width();
+        int16_t screenHeight = M5.Lcd.height();
+        if(!m_bigText.isEmpty())
+        {
+            M5.Lcd.setTextSize(5);
+            M5.Lcd.setTextDatum(MC_DATUM);
+            M5.Lcd.drawString(m_bigText, screenWidth / 2 , screenHeight / 2 );
+        }
+        M5.Lcd.setTextSize(2);
+        if(!m_buttonAText.isEmpty())
+        {
+            M5.Lcd.setTextDatum(BC_DATUM);
+            M5.Lcd.drawString(m_buttonAText, 60, screenHeight);
+        }
+        if(!m_buttonBText.isEmpty())
+        {
+            M5.Lcd.setTextDatum(BC_DATUM);
+            M5.Lcd.drawString(m_buttonBText, 160, screenHeight);
+        }
+        if(!m_buttonCText.isEmpty())
+        {
+            M5.Lcd.setTextDatum(BC_DATUM);
+            M5.Lcd.drawString(m_buttonCText, 260, screenHeight);
         }
 
         M5.Lcd.setCursor(0, 0);
 
         // TODO: do this more dynamically
         M5.Lcd.print(ModeLogger::getLines().c_str());    
-        
+       
         m_visualizeUpdate = false;
         ModeLogger::resetNeedsRefresh();
     }
@@ -56,7 +100,7 @@ namespace cobot
             return;
         }
         m_bigText = text;
-        m_visualizeUpdate = true;
+        forceNextVisualizationUpdate();
     }
 
     void AbstractMode::setButtonAText(String text)
@@ -66,7 +110,7 @@ namespace cobot
             return;
         }
         m_buttonAText = text;
-        m_visualizeUpdate = true;
+        forceNextVisualizationUpdate();
     }
 
     void AbstractMode::setButtonBText(String text)
@@ -76,7 +120,7 @@ namespace cobot
             return;
         }
         m_buttonBText = text;
-        m_visualizeUpdate = true;
+        forceNextVisualizationUpdate();
     }
 
     void AbstractMode::setButtonCText(String text)
@@ -86,6 +130,6 @@ namespace cobot
             return;
         }
         m_buttonCText = text;
-        m_visualizeUpdate = true;
+        forceNextVisualizationUpdate();
     }
 }

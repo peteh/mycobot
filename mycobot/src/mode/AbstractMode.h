@@ -14,14 +14,14 @@ namespace cobot
         AbstractMode();
         virtual void init() = 0;
         virtual void visualize();
+        void forceNextVisualizationUpdate();
+        virtual ~AbstractMode(){};
 
-
+    protected: 
         void setBigText(String text);
         void setButtonAText(String text);
         void setButtonBText(String text);
         void setButtonCText(String text);
-
-        virtual ~AbstractMode(){};
 
     private:
         bool m_visualizeUpdate;

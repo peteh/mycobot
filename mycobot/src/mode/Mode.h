@@ -6,8 +6,10 @@ namespace cobot
 {
     enum Mode
     {
-        THIS, 
-        ESTOP
+        MODE_THIS, 
+        MODE_ESTOP,
+        MODE_AUTOMATIC,
+        MODE_MAIN
     };
 
     class IMode
@@ -16,7 +18,8 @@ namespace cobot
         // called after switching to the mode
         virtual void init() = 0;
         virtual void visualize() = 0;
-        virtual void process(RobotState& oldState, RobotState& newState) = 0;
+        virtual void forceNextVisualizationUpdate() = 0;
+        virtual Mode process(RobotState& oldState, RobotState& newState) = 0;
         virtual ~IMode(){};
     };
 
