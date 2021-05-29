@@ -33,11 +33,10 @@ namespace cobot
             setButtonBText("Main");
             setButtonCText("Record");
         }
-
         else if (m_mode == RECORDING)
         {
             setLEDColor(color::COLOR_ORANGE);
-            setBigText("Recording...");
+            setBigText("Recording");
             setButtonAText("");
             setButtonBText("");
             setButtonCText("Save");
@@ -98,7 +97,6 @@ namespace cobot
                 updateVisualization();
             }
         }
-
         else if (m_mode == FREE_MOVE)
         {
             if (M5.BtnA.wasPressed())

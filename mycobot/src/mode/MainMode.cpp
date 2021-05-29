@@ -17,9 +17,9 @@ namespace cobot
     {
         setBigText("Main");
         setButtonAText("Record");
-        setButtonBText("Play Record");
+        setButtonBText("Replay");
         setButtonCText("Debug");
-        m_mycobotBasic.setLEDRGB(255, 255, 255);
+        setLEDColor(color::COLOR_WHITE);
     }
 
     Mode MainMode::process(RobotState &oldState, RobotState &newState)
