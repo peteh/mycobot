@@ -21,9 +21,11 @@ namespace cobot
         void TFTTest();
         void IOTest();
         void pumpTest();
+        void speakerTest();
         unsigned long m_initTime;
 
         bool m_solenoid;
         bool m_motorOn;
+        uint16_t m_speakerTone;
     };
 }

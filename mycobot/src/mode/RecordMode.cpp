@@ -36,7 +36,8 @@ namespace cobot
         {
             setLEDColor(color::COLOR_ORANGE);
             setBigText("Recording");
-            setButtonAText("");
+            setButtonAText("Abort");
+            // TODO: implement aborting
             if (getCobot().getSuctionPump().isSucking())
             {
                 setButtonBText("Unsuck");

@@ -9,7 +9,8 @@ namespace cobot
         : AbstractMode(myCobot),
           m_initTime(millis()),
           m_solenoid(true),
-          m_motorOn(true)
+          m_motorOn(true),
+          m_speakerTone(0)
     {
     }
 
@@ -76,9 +77,29 @@ namespace cobot
         }
     }
 
+    void DebugMode::speakerTest()
+    {
+        if(M5.BtnB.wasPressed())
+        {
+            m_speakerTone-=100;
+            if(m_speakerTone < 0)
+            {
+                m_speakerTone = 0;
+            }
+            Log::infof("Speaker f: %d", m_speakerTone);
+            M5.Speaker.tone(m_speakerTone, 50); //frequency 3000, with a duration of 200ms
+        }
+        if(M5.BtnC.wasPressed())
+        {
+            m_speakerTone+=100;
+            Log::infof("Speaker f: %d", m_speakerTone);
+            M5.Speaker.tone(m_speakerTone, 50); //frequency 3000, with a duration of 200ms
+        }
+    }
+
     Mode DebugMode::process(RobotState &oldState, RobotState &newState)
     {
-        pumpTest();
+        speakerTest();
         return MODE_THIS;
     }
 }

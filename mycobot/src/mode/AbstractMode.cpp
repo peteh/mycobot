@@ -55,6 +55,12 @@ namespace cobot
 
     void AbstractMode::visualizeUI()
     {
+        // TODO: do we need button feebdack?
+        //if(M5.BtnA.wasPressed() || M5.BtnB.wasPressed() || M5.BtnC.wasPressed())
+        //{
+        //    M5.Speaker.tone(400, 10); 
+        //}
+        
         if (!m_visualizeUIUpdate && !ModeLogger::needsRefresh())
         {
             return;
