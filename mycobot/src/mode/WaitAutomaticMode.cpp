@@ -7,9 +7,8 @@
 
 namespace cobot
 {   
-    WaitAutomaticMode::WaitAutomaticMode(MycobotBasic &myCobot)
+    WaitAutomaticMode::WaitAutomaticMode(Cobot &myCobot)
         : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot),
           m_initTime(millis())
     {
     }

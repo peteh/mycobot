@@ -5,9 +5,8 @@
 
 namespace cobot
 {
-    RecordMode::RecordMode(MycobotBasic &myCobot, record::Recorder *recorder)
+    RecordMode::RecordMode(Cobot &myCobot, record::Recorder *recorder)
         : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot),
           m_lastRecordTime(millis()),
           m_mode(MAIN),
           m_recorder(recorder)
@@ -17,7 +16,7 @@ namespace cobot
     void RecordMode::init()
     {
         setLEDColor(color::COLOR_WHITE);
-        m_mycobotBasic.stop();
+        getCobot().getBase().stop();
 
         m_mode = MAIN;
 
@@ -38,7 +37,14 @@ namespace cobot
             setLEDColor(color::COLOR_ORANGE);
             setBigText("Recording");
             setButtonAText("");
-            setButtonBText("");
+            if (getCobot().getSuctionPump().isSucking())
+            {
+                setButtonBText("Unsuck");
+            }
+            else
+            {
+                setButtonBText("Suck");
+            }
             setButtonCText("Save");
         }
         else if (m_mode == FREE_MOVE)
@@ -46,11 +52,36 @@ namespace cobot
             setLEDColor(color::COLOR_BLUE);
             setBigText("FREE MOVE");
             setButtonAText("Stop");
-            setButtonBText("");
+            if (getCobot().getSuctionPump().isSucking())
+            {
+                setButtonBText("Unsuck");
+            }
+            else
+            {
+                setButtonBText("Suck");
+            }
             setButtonCText("");
         }
     }
 
+    void RecordMode::stopRecording()
+    {
+        m_mode = MAIN;
+        getCobot().getBase().stop();
+        getCobot().getSuctionPump().unsuck();
+        Log::infof("Saved frames: %d", m_recorder->getRecordNum());
+        auto angles = m_recorder->getAngles(0);
+        Log::infof("l1: %d, %d, %d, %d, %d, %d",
+                   angles.joint_angle[0],
+                   angles.joint_angle[1],
+                   angles.joint_angle[2],
+                   angles.joint_angle[3],
+                   angles.joint_angle[4],
+                   angles.joint_angle[5]);
+
+        m_recorder->saveToFile();
+        updateVisualization();
+    }
     Mode RecordMode::process(RobotState &oldState, RobotState &newState)
     {
 
@@ -59,7 +90,7 @@ namespace cobot
             if (M5.BtnA.wasPressed())
             {
                 m_mode = FREE_MOVE;
-                m_mycobotBasic.setFreeMove();
+                getCobot().getBase().setFreeMove();
                 updateVisualization();
             }
 
@@ -72,7 +103,7 @@ namespace cobot
             if (M5.BtnC.wasPressed())
             {
                 m_mode = RECORDING;
-                m_mycobotBasic.setFreeMove();
+                getCobot().getBase().setFreeMove();
                 m_recorder->reset();
                 m_lastRecordTime = millis();
                 updateVisualization();
@@ -80,29 +111,46 @@ namespace cobot
         }
         else if (m_mode == RECORDING)
         {
+            // handle suction
+            if (M5.BtnB.wasPressed())
+            {
+                if (getCobot().getSuctionPump().isSucking())
+                {
+                    getCobot().getSuctionPump().unsuck();
+                }
+                else
+                {
+                    getCobot().getSuctionPump().suck();
+                }
+                updateVisualization();
+            }
+
             // stop recording
             if (M5.BtnC.wasPressed())
             {
-                m_mode = MAIN;
-                m_mycobotBasic.stop();
-                Log::infof("Saved frames: %d", m_recorder->getRecordNum());
-                auto angles = m_recorder->getAngles(0);
-                Log::infof("l1: %d, %d, %d, %d, %d, %d",
-                           angles.joint_angle[0],
-                           angles.joint_angle[1],
-                           angles.joint_angle[2],
-                           angles.joint_angle[3],
-                           angles.joint_angle[4],
-                           angles.joint_angle[5]);
-                updateVisualization();
+                stopRecording();
             }
         }
         else if (m_mode == FREE_MOVE)
         {
             if (M5.BtnA.wasPressed())
             {
-                m_mycobotBasic.stop();
+                getCobot().getBase().stop();
                 m_mode = MAIN;
+                updateVisualization();
+            }
+
+            // handle suction
+            if (M5.BtnB.wasPressed())
+            {
+                if (getCobot().getSuctionPump().isSucking())
+                {
+                    getCobot().getSuctionPump().unsuck();
+                }
+                else
+                {
+                    getCobot().getSuctionPump().suck();
+                }
                 updateVisualization();
             }
         }
@@ -112,6 +160,9 @@ namespace cobot
             record::JointAnglesEnc angles;
             angles.delay = millis() - m_lastRecordTime;
             m_lastRecordTime = millis();
+
+            angles.pump = getCobot().getSuctionPump().isSucking();
+
             for (int i = 0; i < 6; i++)
             {
                 bool wrongVal = true;
@@ -120,7 +171,7 @@ namespace cobot
                 // technically it should just be there
                 for (int x = 0; x < 3 && wrongVal; x++)
                 {
-                    angles.joint_angle[i] = m_mycobotBasic.getEncoder(i + 1);
+                    angles.joint_angle[i] = getCobot().getBase().getEncoder(i + 1);
                     if (angles.joint_angle[i] != -1)
                     {
                         wrongVal = false;
@@ -137,9 +188,8 @@ namespace cobot
             }
             else
             {
-                m_mode = MAIN;
-                m_mycobotBasic.stop();
-                updateVisualization();
+                // buffer is full or we failed to write for other reason
+                stopRecording();
             }
         }
         return MODE_THIS;

@@ -5,8 +5,8 @@
 
 namespace cobot
 {
-    AbstractMode::AbstractMode(MycobotBasic &myCobot)
-        : m_mycobotBasic(myCobot),
+    AbstractMode::AbstractMode(Cobot &myCobot)
+        : m_myCobot(myCobot),
           m_visualizeUIUpdate(true),
           m_visualizeLEDUpdate(true),
           m_buttonAText(""),
@@ -16,6 +16,10 @@ namespace cobot
     {
     }
 
+    Cobot& AbstractMode::getCobot()
+    {
+        return m_myCobot;
+    }
     void AbstractMode::forceNextVisualizationUpdate()
     {
         forceNextLEDUpdate();
@@ -44,10 +48,11 @@ namespace cobot
             return;
         }
         delay(50);
-        m_mycobotBasic.setLEDRGB(m_ledColor.R, m_ledColor.G, m_ledColor.B);
+        m_myCobot.getBase().setLEDRGB(m_ledColor.R, m_ledColor.G, m_ledColor.B);
         delay(50);
         m_visualizeLEDUpdate = false;
     }
+
     void AbstractMode::visualizeUI()
     {
         if (!m_visualizeUIUpdate && !ModeLogger::needsRefresh())

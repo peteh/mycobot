@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MycobotBasic.h>
+#include "../Cobot.h"
 #include "AbstractMode.h"
 
 namespace cobot
@@ -10,7 +10,7 @@ namespace cobot
     class BootMode : public AbstractMode
     {
         public: 
-            BootMode(MycobotBasic& myCobot);
+            BootMode(Cobot& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
@@ -21,7 +21,6 @@ namespace cobot
             void pulse(uint delay, uint stepSize);
             void pulseUp(uint delay, uint stepSize);
             void pulseDown(uint delay, uint stepSize);
-            MycobotBasic m_mycobotBasic;
             unsigned long m_initTime;
     };
 }

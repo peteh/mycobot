@@ -1,24 +1,29 @@
 #pragma once
 
-#include <MycobotBasic.h>
+#include "../Cobot.h"
 #include "AbstractMode.h"
 
 namespace cobot
 {
-    
 
     class DebugMode : public AbstractMode
     {
-        public: 
-            DebugMode(MycobotBasic& myCobot);
-            virtual void init() override;
+    public:
+        DebugMode(Cobot &myCobot);
+        virtual void init() override;
 
-            virtual Mode process(RobotState& oldState, RobotState& newState) override;
+        virtual Mode process(RobotState &oldState, RobotState &newState) override;
 
-            virtual ~DebugMode() {};
-        
-        private:          
-            MycobotBasic m_mycobotBasic;
-            unsigned long m_initTime;
+        virtual ~DebugMode(){};
+
+    private:
+        void showEncoders();
+        void TFTTest();
+        void IOTest();
+        void pumpTest();
+        unsigned long m_initTime;
+
+        bool m_solenoid;
+        bool m_motorOn;
     };
 }

@@ -3,6 +3,8 @@
 #include "State.h"
 #include "Mode.h"
 
+#include "../Cobot.h"
+
 namespace cobot
 {
 
@@ -37,7 +39,7 @@ namespace cobot
         static const Color COLOR_RED(255, 0, 0);
         static const Color COLOR_BLUE(0, 0, 255);
         static const Color COLOR_WHITE(255, 255, 255);
-        static const Color COLOR_ORANGE(255, 165, 0);
+        static const Color COLOR_ORANGE(255, 95, 31);
 
         // TODO: implement comperator
     }
@@ -53,7 +55,10 @@ namespace cobot
         virtual ~AbstractMode(){};
         
     protected:
-        AbstractMode(MycobotBasic &myCobot);
+        AbstractMode(Cobot &myCobot);
+
+        Cobot& getCobot();
+
         void setBigText(String text);
         void setButtonAText(String text);
         void setButtonBText(String text);
@@ -65,7 +70,7 @@ namespace cobot
         void forceNextUIUpdate();
         void forceNextLEDUpdate();
     private:
-        MycobotBasic m_mycobotBasic;
+        Cobot m_myCobot;
 
         bool m_visualizeUIUpdate;
         bool m_visualizeLEDUpdate;

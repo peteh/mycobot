@@ -5,9 +5,8 @@
 
 namespace cobot
 {   
-    AutomaticMode::AutomaticMode(MycobotBasic &myCobot)
-        : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot)
+    AutomaticMode::AutomaticMode(Cobot &myCobot)
+        : AbstractMode(myCobot)
     {
     }
 
@@ -17,7 +16,7 @@ namespace cobot
         setButtonAText("");
         setButtonBText("Main");
         setButtonCText("");
-        m_mycobotBasic.setLEDRGB(0, 0, 255);
+        setLEDColor(color::COLOR_BLUE);
     }
 
     Mode AutomaticMode::process(RobotState &oldState, RobotState &newState)

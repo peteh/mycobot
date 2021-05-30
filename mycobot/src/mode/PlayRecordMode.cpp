@@ -5,9 +5,8 @@
 
 namespace cobot
 {
-    PlayRecordMode::PlayRecordMode(MycobotBasic &myCobot, record::Recorder *recorder)
+    PlayRecordMode::PlayRecordMode(Cobot &myCobot, record::Recorder *recorder)
         : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot),
           m_lastRecordTime(millis()),
           m_playingRecord(false),
           m_playingIndex(0),
@@ -20,7 +19,7 @@ namespace cobot
         m_playingRecord = false;
         m_playingIndex = 0;
 
-        m_mycobotBasic.stop();
+        getCobot().getBase().stop();
         updateVisualization();
     }
     void PlayRecordMode::updateVisualization()
@@ -50,7 +49,8 @@ namespace cobot
             if(M5.BtnA.wasPressed())
             {
                 m_playingRecord = false;
-                m_mycobotBasic.stop();
+                getCobot().getBase().stop();
+                getCobot().getSuctionPump().unsuck();
                 updateVisualization();
             }
         }
@@ -62,7 +62,6 @@ namespace cobot
                 m_playingRecord = true;
                 m_playingIndex = 0;
                 updateVisualization();
-                // TODO: led stuff
             }
 
             if(M5.BtnB.wasPressed())
@@ -77,11 +76,23 @@ namespace cobot
             {
                 record::JointAnglesEnc angles = m_recorder->getAngles(m_playingIndex);
                 delay(angles.delay);
+
+                if(getCobot().getSuctionPump().isSucking() != angles.pump)
+                {
+                    if(angles.pump)
+                    {
+                        getCobot().getSuctionPump().suck();
+                    }
+                    else
+                    {
+                        getCobot().getSuctionPump().unsuck();
+                    }
+                }
                 Angles encoders;
                 for (int i = 0; i < 6; i++){
                     encoders[i] = angles.joint_angle[i];
                 }
-                m_mycobotBasic.setEncoders(encoders, 100);
+                getCobot().getBase().setEncoders(encoders, 100);
                 
                 m_playingIndex++;
             }

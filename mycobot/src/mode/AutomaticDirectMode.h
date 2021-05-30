@@ -15,15 +15,13 @@ namespace cobot
     class AutomaticDirectMode : public AbstractMode
     {
         public: 
-            AutomaticDirectMode(MycobotBasic& myCobot);
+            AutomaticDirectMode(Cobot& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
 
             virtual ~AutomaticDirectMode() {};
-        
-        private:          
-            MycobotBasic m_mycobotBasic;
+
     };
 }
 

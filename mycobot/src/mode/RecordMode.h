@@ -10,7 +10,7 @@ namespace cobot
     class RecordMode : public AbstractMode
     {
     public:
-        RecordMode(MycobotBasic &myCobot, record::Recorder *recorder);
+        RecordMode(Cobot &myCobot, record::Recorder *recorder);
 
         virtual void init() override;
 
@@ -27,8 +27,8 @@ namespace cobot
         };
 
         void updateVisualization();
+        void stopRecording();
 
-        MycobotBasic m_mycobotBasic;
         unsigned long m_lastRecordTime;
         InternalMode m_mode;
 

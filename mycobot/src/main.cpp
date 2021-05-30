@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <MycobotBasic.h>
-#include <ParameterList.h>
 #include <WiFi.h>
 #include <EStopReceiver.h>
 #include <Log.h>
@@ -18,6 +17,8 @@
 #include "mode/BootMode.h"
 #include "mode/ModeLogger.h"
 #include "record/Recorder.h"
+#include "Cobot.h"
+#include "tools/SuctionPump.h"
 
 uint8_t WIFI_CHANNEL = 0;
 
@@ -38,7 +39,8 @@ unsigned long SKIP_BEFORE_TIMEOUT = 5;
 // Address of the client station (wireless estop button)
 uint8_t BUTTON_STATION_MAC[] = {0xDE, 0xAD, 0x13, 0x37, 0x00, 0x02};
 
-MycobotBasic myCobot;
+cobot::Cobot g_cobot;
+
 estop::EStopReceiver *g_eStopReceiver;
 
 estop::EStopState g_previousEStopState;
@@ -55,8 +57,9 @@ void setup()
   Serial.begin(115200);
   Log::init(new ModeLogger());
   //Log::init(new SerialLogger());
-  myCobot.setup();
-  myCobot.powerOn();
+  g_cobot.getBase().setup();
+  g_cobot.getBase().powerOn();
+  g_cobot.getSuctionPump().setup();
 
   // delete old wifi settings
   WiFi.disconnect();
@@ -70,16 +73,19 @@ void setup()
   g_previousEStopState = g_eStopReceiver->getEStopState();
 
   g_recorder = new cobot::record::Recorder();
-  g_modeMap[cobot::MODE_BOOT] = new cobot::BootMode(myCobot);
-  g_modeMap[cobot::MODE_MAIN] = new cobot::MainMode(myCobot);
-  g_modeMap[cobot::MODE_RECORD] = new cobot::RecordMode(myCobot, g_recorder);
-  g_modeMap[cobot::MODE_PLAY_RECORD] = new cobot::PlayRecordMode(myCobot, g_recorder);
-  g_modeMap[cobot::MODE_AUTOMATIC] = new cobot::AutomaticMode(myCobot);
-  g_modeMap[cobot::MODE_AUTOMATIC_WAIT] = new cobot::WaitAutomaticMode(myCobot);
-  g_modeMap[cobot::MODE_AUTOMATIC_DIRECT] = new cobot::AutomaticDirectMode(myCobot);
-  g_modeMap[cobot::MODE_ESTOP] = new cobot::EStopMode(myCobot);
+  // load the latest recorded motion if it exists
+  g_recorder->loadFromFile();
 
-  g_modeMap[cobot::MODE_DEBUG] = new cobot::DebugMode(myCobot);
+  g_modeMap[cobot::MODE_BOOT] = new cobot::BootMode(g_cobot);
+  g_modeMap[cobot::MODE_MAIN] = new cobot::MainMode(g_cobot);
+  g_modeMap[cobot::MODE_RECORD] = new cobot::RecordMode(g_cobot, g_recorder);
+  g_modeMap[cobot::MODE_PLAY_RECORD] = new cobot::PlayRecordMode(g_cobot, g_recorder);
+  g_modeMap[cobot::MODE_AUTOMATIC] = new cobot::AutomaticMode(g_cobot);
+  g_modeMap[cobot::MODE_AUTOMATIC_WAIT] = new cobot::WaitAutomaticMode(g_cobot);
+  g_modeMap[cobot::MODE_AUTOMATIC_DIRECT] = new cobot::AutomaticDirectMode(g_cobot);
+  g_modeMap[cobot::MODE_ESTOP] = new cobot::EStopMode(g_cobot);
+
+  g_modeMap[cobot::MODE_DEBUG] = new cobot::DebugMode(g_cobot);
 
   g_mode = g_modeMap[cobot::MODE_BOOT];
   g_mode->init();

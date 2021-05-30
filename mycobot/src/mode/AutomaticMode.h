@@ -15,7 +15,7 @@ namespace cobot
     class AutomaticMode : public AbstractMode
     {
         public: 
-            AutomaticMode(MycobotBasic& myCobot);
+            AutomaticMode(Cobot& myCobot);
             virtual void init() override;
 
             virtual Mode process(RobotState& oldState, RobotState& newState) override;
@@ -23,7 +23,6 @@ namespace cobot
             virtual ~AutomaticMode() {};
         
         private:
-            MycobotBasic m_mycobotBasic;
             Command m_incomingCommand;
             Response m_outgoingCommand;
     };

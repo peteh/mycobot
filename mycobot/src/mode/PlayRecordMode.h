@@ -1,6 +1,4 @@
 #pragma once
-
-#include <MycobotBasic.h>
 #include "AbstractMode.h"
 #include "record/Recorder.h"
 
@@ -10,7 +8,7 @@ namespace cobot
     class PlayRecordMode : public AbstractMode
     {
         public: 
-            PlayRecordMode(MycobotBasic &myCobot, record::Recorder* recorder);
+            PlayRecordMode(Cobot &myCobot, record::Recorder* recorder);
 
             virtual void init() override;
 
@@ -21,7 +19,6 @@ namespace cobot
         private:
             void updateVisualization();
 
-            MycobotBasic m_mycobotBasic;
             unsigned long m_lastRecordTime;
             bool m_playingRecord;
             unsigned int m_playingIndex;

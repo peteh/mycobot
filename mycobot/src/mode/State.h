@@ -1,5 +1,4 @@
-#ifndef STATE_H
-#define STATE_H
+#pragma once
 #include <EStopReceiver.h>
 
 namespace cobot
@@ -10,5 +9,3 @@ namespace cobot
         estop::EStopState eStopState;
     };
 }
-
-#endif

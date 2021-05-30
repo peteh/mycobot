@@ -8,7 +8,7 @@ namespace cobot
     class EStopMode : public AbstractMode
     {
         public: 
-            EStopMode(MycobotBasic& myCobot);
+            EStopMode(Cobot& myCobot);
 
             virtual void init() override;
 
@@ -18,7 +18,6 @@ namespace cobot
             virtual ~EStopMode() {};
         
         private:
-            MycobotBasic m_mycobotBasic;
             bool m_cobotFreeMove;
     };
 }

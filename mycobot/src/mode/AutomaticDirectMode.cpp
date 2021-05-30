@@ -2,14 +2,11 @@
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <Log.h>
-#include <MycobotBasic.h>
-#include <ParameterList.h>
 
 namespace cobot
 {   
-    AutomaticDirectMode::AutomaticDirectMode(MycobotBasic &myCobot)
-        : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot)
+    AutomaticDirectMode::AutomaticDirectMode(Cobot &myCobot)
+        : AbstractMode(myCobot)
     {
     }
 

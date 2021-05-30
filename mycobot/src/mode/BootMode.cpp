@@ -2,14 +2,11 @@
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <Log.h>
-#include <MycobotBasic.h>
-#include <ParameterList.h>
 
 namespace cobot
 {
-    BootMode::BootMode(MycobotBasic &myCobot)
+    BootMode::BootMode(Cobot &myCobot)
         : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot),
           m_initTime(millis())
     {
     }
@@ -24,10 +21,10 @@ namespace cobot
     {
         for (int16_t x = 0; x <= 255; x += stepSize)
         {
-            m_mycobotBasic.setLEDRGB(x, x, x);
+            getCobot().getBase().setLEDRGB(x, x, x);
             delay(delayMs);
         }
-        m_mycobotBasic.setLEDRGB(255, 255, 255);
+        getCobot().getBase().setLEDRGB(255, 255, 255);
         delay(delayMs);
     }
 
@@ -35,10 +32,10 @@ namespace cobot
     {
         for (int16_t x = 255; x >= 0; x -= stepSize)
         {
-            m_mycobotBasic.setLEDRGB(x, x, x);
+            getCobot().getBase().setLEDRGB(x, x, x);
             delay(delayMs);
         }
-        m_mycobotBasic.setLEDRGB(0, 0, 0);
+        getCobot().getBase().setLEDRGB(0, 0, 0);
         delay(delayMs);
     }
 
@@ -50,7 +47,7 @@ namespace cobot
 
     Mode BootMode::process(RobotState &oldState, RobotState &newState)
     {
-        m_mycobotBasic.stop();
+        getCobot().getBase().stop();
         // TODO make cool
         for(uint i = 0; i < 0; i++)
         {

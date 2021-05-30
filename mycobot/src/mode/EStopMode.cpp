@@ -3,9 +3,8 @@
 #include <Log.h>
 namespace cobot
 {
-    EStopMode::EStopMode(MycobotBasic &myCobot)
+    EStopMode::EStopMode(Cobot &myCobot)
         : AbstractMode(myCobot),
-          m_mycobotBasic(myCobot),
           m_cobotFreeMove(false)
     {
     }
@@ -18,7 +17,8 @@ namespace cobot
         {
             Serial2.read();
         }
-        m_mycobotBasic.stop();
+        getCobot().getBase().stop();
+        getCobot().getSuctionPump().unsuck();
         delay(50);
         m_cobotFreeMove = false;
     }
@@ -72,11 +72,11 @@ namespace cobot
                 m_cobotFreeMove = !m_cobotFreeMove;
                 if (m_cobotFreeMove)
                 {
-                    m_mycobotBasic.setFreeMove();
+                    getCobot().getBase().setFreeMove();
                 }
                 else
                 {
-                    m_mycobotBasic.stop();
+                    getCobot().getBase().stop();
                 }
                 forceUpdate = true;
                 delay(50);
