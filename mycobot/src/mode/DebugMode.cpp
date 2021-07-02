@@ -99,7 +99,26 @@ namespace cobot
 
     Mode DebugMode::process(RobotState &oldState, RobotState &newState)
     {
-        speakerTest();
+        M5.Lcd.clear(BLACK);
+  M5.Lcd.setCursor(0,10);
+  M5.Lcd.setTextSize(2);
+  M5.Lcd.println("Servo CHANGE PID is");
+  for(int i =1; i <7; i++)
+  { 
+     M5.Lcd.print("servo: ");
+     M5.Lcd.print(i);
+     M5.Lcd.print(" P: ");
+     M5.Lcd.print(getCobot().getBase().getServoData(i, 21));//P
+     delay(50);
+     M5.Lcd.print(" D: ");
+     M5.Lcd.print(getCobot().getBase().getServoData(i, 22));//D
+     delay(50);
+     M5.Lcd.print(" I: ");
+     M5.Lcd.print(getCobot().getBase().getServoData(i, 23));//I
+     delay(50);
+     M5.Lcd.println();
+     M5.Lcd.println();
+  }
         return MODE_THIS;
     }
 }

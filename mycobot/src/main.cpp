@@ -15,6 +15,7 @@
 #include "mode/RecordMode.h"
 #include "mode/PlayRecordMode.h"
 #include "mode/BootMode.h"
+#include "mode/PIDMode.h"
 #include "mode/ModeLogger.h"
 #include "record/Recorder.h"
 #include "Cobot.h"
@@ -86,8 +87,10 @@ void setup()
   g_modeMap[cobot::MODE_ESTOP] = new cobot::EStopMode(g_cobot);
 
   g_modeMap[cobot::MODE_DEBUG] = new cobot::DebugMode(g_cobot);
+  g_modeMap[cobot::MODE_PID] = new cobot::PIDMode(g_cobot);
 
   g_mode = g_modeMap[cobot::MODE_BOOT];
+  //g_mode = g_modeMap[cobot::MODE_PID];
   g_mode->init();
 
   delay(200);

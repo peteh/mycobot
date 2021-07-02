@@ -15,6 +15,7 @@ namespace cobot
         MODE_AUTOMATIC_DIRECT,
         MODE_MAIN,
         MODE_AUTOMATIC_WAIT,
+        MODE_PID,
 
         MODE_DEBUG
 
