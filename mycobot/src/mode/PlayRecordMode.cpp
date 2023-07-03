@@ -92,7 +92,7 @@ namespace cobot
                 for (int i = 0; i < 6; i++){
                     encoders[i] = angles.joint_angle[i];
                 }
-                getCobot().getBase().setEncoders(encoders, 100);
+                getCobot().getBase().setEncoders(encoders, 80);
                 
                 m_playingIndex++;
             }
