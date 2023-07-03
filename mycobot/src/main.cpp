@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
-#include <MycobotBasic.h>
+#include <MyCobotBasic.h>
 #include <WiFi.h>
 #include <EStopReceiver.h>
 #include <Log.h>

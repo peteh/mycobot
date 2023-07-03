@@ -15,7 +15,7 @@ namespace cobot
         setBigText("Main");
         setButtonAText("Record");
         setButtonBText("Replay");
-        setButtonCText("Debug");
+        setButtonCText("Auto");
         setLEDColor(color::COLOR_WHITE);
     }
 
@@ -32,7 +32,7 @@ namespace cobot
         }
         if(M5.BtnC.wasPressed())
         {
-            return MODE_DEBUG;
+            return MODE_AUTOMATIC_WAIT;
         }
         return MODE_THIS;
         

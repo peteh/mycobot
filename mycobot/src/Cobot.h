@@ -1,5 +1,5 @@
 #pragma once
-#include <MycobotBasic.h>
+#include <MyCobotBasic.h>
 #include "tools/SuctionPump.h"
 namespace cobot
 {
@@ -8,11 +8,11 @@ namespace cobot
     public:
         Cobot();
 
-        MycobotBasic &getBase();
+        MyCobotBasic &getBase();
         tools::SuctionPump &getSuctionPump();
 
     private:
-        MycobotBasic m_myCobot;
+        MyCobotBasic m_myCobot;
         tools::SuctionPump m_suctionPump;
     };
 }

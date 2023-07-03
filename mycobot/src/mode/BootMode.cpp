@@ -47,7 +47,7 @@ namespace cobot
 
     Mode BootMode::process(RobotState &oldState, RobotState &newState)
     {
-        getCobot().getBase().stop();
+        getCobot().getBase().jogStop();
         // TODO make cool
         for(uint i = 0; i < 0; i++)
         {

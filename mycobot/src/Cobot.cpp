@@ -8,7 +8,7 @@ namespace cobot
     {
     }
 
-    MycobotBasic& Cobot::getBase()
+    MyCobotBasic& Cobot::getBase()
     {
         return m_myCobot;
     }

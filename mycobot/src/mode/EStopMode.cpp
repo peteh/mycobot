@@ -17,7 +17,7 @@ namespace cobot
         {
             Serial2.read();
         }
-        getCobot().getBase().stop();
+        getCobot().getBase().jogStop();
         getCobot().getSuctionPump().unsuck();
         delay(50);
         m_cobotFreeMove = false;
@@ -76,7 +76,7 @@ namespace cobot
                 }
                 else
                 {
-                    getCobot().getBase().stop();
+                    getCobot().getBase().jogStop();
                 }
                 forceUpdate = true;
                 delay(50);

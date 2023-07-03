@@ -1,7 +1,7 @@
 #ifndef DEBUG_MODE_H
 #define DEBUG_MODE_H
 
-#include <MycobotBasic.h>
+#include <MyCobotBasic.h>
 #include "AbstractMode.h"
 #include "../pipe/Command.h"
 #include "../pipe/Response.h"

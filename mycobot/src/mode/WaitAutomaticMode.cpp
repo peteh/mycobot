@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <Log.h>
-#include <MycobotBasic.h>
+#include <MyCobotBasic.h>
 #include <ParameterList.h>
 
 namespace cobot
@@ -25,7 +25,7 @@ namespace cobot
 
         if(timeDelta >= 3000)
         {
-            return MODE_AUTOMATIC;
+            return MODE_AUTOMATIC_DIRECT;
         }
         else if(timeDelta >= 2000)
         {

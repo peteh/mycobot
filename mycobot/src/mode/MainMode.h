@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MycobotBasic.h>
+#include <MyCobotBasic.h>
 #include "AbstractMode.h"
 
 namespace cobot

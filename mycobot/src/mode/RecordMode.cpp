@@ -16,7 +16,7 @@ namespace cobot
     void RecordMode::init()
     {
         setLEDColor(color::COLOR_WHITE);
-        getCobot().getBase().stop();
+        getCobot().getBase().jogStop();
 
         m_mode = MAIN;
 
@@ -68,7 +68,7 @@ namespace cobot
     void RecordMode::stopRecording()
     {
         m_mode = MAIN;
-        getCobot().getBase().stop();
+        getCobot().getBase().jogStop();
         getCobot().getSuctionPump().unsuck();
         Log::infof("Saved frames: %d", m_recorder->getRecordNum());
         auto angles = m_recorder->getAngles(0);
@@ -136,7 +136,7 @@ namespace cobot
         {
             if (M5.BtnA.wasPressed())
             {
-                getCobot().getBase().stop();
+                getCobot().getBase().jogStop();
                 m_mode = MAIN;
                 updateVisualization();
             }
@@ -158,39 +158,49 @@ namespace cobot
 
         if (m_mode == RECORDING)
         {
-            record::JointAnglesEnc angles;
-            angles.delay = millis() - m_lastRecordTime;
-            m_lastRecordTime = millis();
+            
+            unsigned long timeSinceLastRecord = millis() - m_lastRecordTime;
 
-            angles.pump = getCobot().getSuctionPump().isSucking();
+            if (timeSinceLastRecord >= 100)
+            {
+                record::JointAnglesEnc angles;
+                angles.delay = timeSinceLastRecord;
+                m_lastRecordTime = millis();
 
-            for (int i = 0; i < 6; i++)
-            {
-                bool wrongVal = true;
-                // TODO: not sure if this is the best way
-                // we retry 3 times to get a proper value, but
-                // technically it should just be there
-                for (int x = 0; x < 3 && wrongVal; x++)
+                angles.pump = getCobot().getSuctionPump().isSucking();
+                auto encs = getCobot().getBase().getEncoders();
+                for (int i = 0; i < 6; i++)
                 {
-                    angles.joint_angle[i] = getCobot().getBase().getEncoder(i + 1);
-                    if (angles.joint_angle[i] != -1)
-                    {
-                        wrongVal = false;
-                    }
+                    angles.joint_angle[i] = encs[i];
                 }
-                if (wrongVal)
+                // for (int i = 0; i < 6; i++)
+                // {
+                //     bool wrongVal = true;
+                //     // TODO: not sure if this is the best way
+                //     // we retry 3 times to get a proper value, but
+                //     // technically it should just be there
+                //     for (int x = 0; x < 3 && wrongVal; x++)
+                //     {
+                //         angles.joint_angle[i] = getCobot().getBase().getEncoder(i + 1);
+                //         if (angles.joint_angle[i] != -1)
+                //         {
+                //             wrongVal = false;
+                //         }
+                //     }
+                //     if (wrongVal)
+                //     {
+                //         Log::errorf("No val for ax %d", i);
+                //     }
+                // }
+                if (m_recorder->record(angles))
                 {
-                    Log::errorf("No val for ax %d", i);
+                    delay(REC_TIME_DELAY - SEND_DATA_GAP);
                 }
-            }
-            if (m_recorder->record(angles))
-            {
-                delay(REC_TIME_DELAY - SEND_DATA_GAP);
-            }
-            else
-            {
-                // buffer is full or we failed to write for other reason
-                stopRecording();
+                else
+                {
+                    // buffer is full or we failed to write for other reason
+                    stopRecording();
+                }
             }
         }
         return MODE_THIS;

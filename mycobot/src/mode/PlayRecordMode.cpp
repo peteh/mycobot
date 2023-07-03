@@ -19,7 +19,7 @@ namespace cobot
         m_playingRecord = false;
         m_playingIndex = 0;
 
-        getCobot().getBase().stop();
+        getCobot().getBase().jogStop();
         updateVisualization();
     }
     void PlayRecordMode::updateVisualization()
@@ -49,7 +49,7 @@ namespace cobot
             if(M5.BtnA.wasPressed())
             {
                 m_playingRecord = false;
-                getCobot().getBase().stop();
+                getCobot().getBase().jogStop();
                 getCobot().getSuctionPump().unsuck();
                 updateVisualization();
             }
